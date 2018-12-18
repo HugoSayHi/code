@@ -1,0 +1,224 @@
+service iptables stop
+
+
+zookeeper 
+sh /usr/local/zookeeper-3.4.6/bin/zkServer.sh start
+sh /usr/local/zookeeper-3.4.6/bin/zkServer.sh status
+
+kafka
+sh /usr/local/kafka_2.11-2.0.0/bin/kafka-server-start.sh -daemon /usr/local/kafka_2.11-2.0.0/config/server.properties
+
+storm 
+-server1
+/usr/local/apache-storm-1.2.2/bin/storm nimbus &
+/usr/local/apache-storm-1.2.2/bin/storm supervisor &
+/usr/local/apache-storm-1.2.2/bin/storm ui &
+
+
+
+--server2
+/usr/local/apache-storm-1.2.2/bin/storm nimbus &
+/usr/local/apache-storm-1.2.2/bin/storm supervisor &
+
+--server3
+/usr/local/apache-storm-1.2.2/bin/storm supervisor &
+
+
+influxdb
+--server1
+service influxdb start
+
+grafana
+--server1
+service grafana-server start
+
+nginx
+--server1
+/usr/local/nginx/sbin/nginx
+
+canal
+--server1
+/usr/local/canal/bin/startup.sh
+
+sh /root/app/dbus-canal-auto-0.5.0/start.sh
+
+kafka-manager
+--server1
+nohup /root/app/kafka-manager-1.3.3.4/bin/kafka-manager -Dconfig.file=/root/app/kafka-manager-1.3.3.4/conf/application.conf >/dev/null 2>&1 &
+
+
+dbus
+--server1
+
+心跳
+flume
+
+
+
+influxdb
+-dbus dbus!@#123
+
+mysql
+-root  123456
+-yuguo 123456
+-canal canal
+-dbusmgr Dbusmgr!@#123
+-dbus dbus
+
+jdbc:mysql://server1:3306/dbus?characterEncoding=utf-8&useSSL=false
+jdbc:mysql://server1:3306/yuguo?characterEncoding=utf-8&useSSL=false
+
+jdbc:mysql://192.168.104.42:3306/dbus?characterEncoding=utf-8&useSSL=false
+
+
+jdbc:mysql://dbus-1:3306/dbus?characterEncoding=utf-8&useSSL=false
+
+
+granfa key
+eyJrIjoiS1MwTDg5RnBMUEVhcGhMNWkzQ0F2NEFUanlSdER5R2QiLCJuIjoieXVndW8iLCJpZCI6MX0=
+
+
+ /otter/canal/destinations/test_mysql_db/cluster
+
+
+select node,message,type from log_test;	
+
+
+wormhole 启动
+
+hadoop
+--wh-1
+sh /usr/local/hadoop-2.8.1/sbin/start-all.sh
+
+spark
+--wh-1
+sh /usr/local/spark-2.2.1/sbin/start-all.sh
+sh /usr/local/spark-2.2.1/sbin/stop-all.sh
+
+
+elsearch
+/usr/local/elasticsearch-5.6.7/bin/elasticsearch -d
+
+elsearch soft nofile 65536
+elsearch hard nofile 65536
+elsearch soft nproc 2048
+elsearch hard nproc 2048
+elsearch soft memlock unlimited
+elsearch hard memlock unlimited
+
+
+
+
+下游数据测试  
+
+mysql 数据抽取方式
+
+网络拓扑
+
+
+深入研究
+-单点故障分析
+-数据采集可靠性： 数据丢失 补救措施
+-docker 部署
+-ftp 文件采集：单个大文件 大量小文件 压缩包(嵌套)  
+-源码修改 编译 
+-上传git
+
+
+wormhole 
+--  MySQL es hdfs
+
+
+
+
+
+/usr/local/apache-storm-1.2.2/dbus_router_jars/dbus_startTopology.sh /usr/local/apache-storm-1.2.2 router dbus-1:2181,dbus-2:2181,dbus-3:2181 p1_mysql /usr/local/apache-storm-1.2.2/dbus_router_jar
+s/0.5.x/router/20180809_153740/ dbus-router-0.5.0-jar-with-dependencies.jar p1
+
+
+
+
+wormhole
+--wh-1
+hadoop
+sh /usr/local/hadoop-2.8.1/sbin/start-all.sh
+
+spark
+sh /usr/local/spark-2.2.1/sbin/start-all.sh
+
+zookeeper
+sh /usr/local/zookeeper-3.4.6/bin/zkServer.sh start
+
+kafka
+sh /usr/local/kafka_2.11-2.0.0/bin/kafka-server-start.sh -daemon /usr/local/kafka_2.11-2.0.0/config/server.properties
+
+
+
+
+遇到的问题
+需要解决的问题
+运维
+
+
+
+MOUNT TABLE mysql_test OPTIONS(
+    type 'mysql',
+    url 'jdbc:mysql://192.168.104.42:3306/test_db',
+    user 'root',
+    password 'Root_123',
+    driver 'com.mysql.jdbc.Driver',
+    dbtable 'tt'
+);
+
+MOUNT TABLE mysql_log_flume OPTIONS(
+    type 'mysql',
+    url 'jdbc:mysql://192.168.104.42:3306/test_db',
+    user 'root',
+    password 'Root_123',
+    driver 'com.mysql.jdbc.Driver',
+    dbtable 'log_flume'
+);
+
+
+MOUNT TABLE mysql_log_flume_2 OPTIONS(
+    type 'mysql',
+    url 'jdbc:mysql://192.168.104.42:3306/test_db',
+    user 'root',
+    password 'Root_123',
+    driver 'com.mysql.jdbc.Driver',
+    dbtable 'log_flume_2'
+);
+
+
+
+jdbc:moonbox://192.168.104.40:10010/default
+
+
+export JAVA_HOME=/opt/jdk1.8.0_161
+export JRE_HOME=/opt/jdk1.8.0_161/jre
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/libexport PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+
+
+/otter/canal/destinations/test_mysql_db/cluster
+
+
+zkServers=
+canal.destinations= test_mysql_db
+canal.instance.filter.query.dcl = true
+canal.instance.filter.query.dml = true
+
+
+项目的数据采集场景、数据清洗统计场景、还有数据的挖掘分析场景
+
+
+
+spark.driver.extraJavaOptions=-XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:-UseGCOverheadLimit -Dlog4j.configuration=sparkx.log4j.properties -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/wormhole/gc/
+
+
+spark.executor.extraJavaOptions=-XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:-UseGCOverheadLimit -Dlog4j.configuration=sparkx.log4j.properties -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/wormhole/gc
+
+spark.locality.wait=10ms,spark.shuffle.spill.compress=false,spark.io.compression.codec=org.apache.spark.io.SnappyCompressionCodec,spark.streaming.stopGracefullyOnShutdown=true,spark.scheduler.listenerbus.eventqueue.size=1000000,spark.sql.ui.retainedExecutions=3,spark.streaming.kafka.consumer.cache.enabled=false
+
+
+
+select t1.*,t2.* from  hive_test_default.s_xdr_http_bj_171018 t1 join mysql.city t2 on t1.ci=t2.eci_dec
